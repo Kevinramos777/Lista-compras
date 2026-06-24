@@ -6,32 +6,7 @@
   }
 
   function createSampleLists() {
-    return [
-      {
-        id: uid('list'),
-        name: 'Mercado',
-        items: [
-          { id: uid('item'), name: 'Arroz', quantity: 2, category: 'Alimentação', price: 8.5, note: 'Tipo integral', purchased: false },
-          { id: uid('item'), name: 'Leite', quantity: 3, category: 'Bebidas', price: 4.2, note: '', purchased: true },
-          { id: uid('item'), name: 'Sabão', quantity: 1, category: 'Limpeza', price: 6.9, note: 'Neutro', purchased: false }
-        ]
-      },
-      {
-        id: uid('list'),
-        name: 'Churrasco',
-        items: [
-          { id: uid('item'), name: 'Carne', quantity: 2, category: 'Alimentação', price: 34.9, note: 'Picanha', purchased: false },
-          { id: uid('item'), name: 'Refrigerante', quantity: 6, category: 'Bebidas', price: 3.5, note: '', purchased: false }
-        ]
-      },
-      {
-        id: uid('list'),
-        name: 'Farmácia',
-        items: [
-          { id: uid('item'), name: 'Dipirona', quantity: 1, category: 'Farmácia', price: 12.5, note: 'Comprimidos', purchased: true }
-        ]
-      }
-    ];
+    return [];
   }
 
   function getDefaultCategories() {
@@ -40,6 +15,7 @@
 
   function createDefaultState() {
     return {
+      version: 2,
       theme: 'light',
       categories: getDefaultCategories(),
       lists: createSampleLists()
@@ -72,6 +48,7 @@
     const lists = Array.isArray(safeState.lists) ? safeState.lists.map(normalizeList) : createSampleLists();
 
     return {
+      version: 2,
       theme: safeState.theme === 'dark' ? 'dark' : 'light',
       categories,
       lists
@@ -86,7 +63,15 @@
         saveState(defaultState);
         return defaultState;
       }
-      return ensureStateStructure(JSON.parse(raw));
+
+      const parsedState = JSON.parse(raw);
+      if (!parsedState || typeof parsedState !== 'object' || parsedState.version !== 2) {
+        const defaultState = createDefaultState();
+        saveState(defaultState);
+        return defaultState;
+      }
+
+      return ensureStateStructure(parsedState);
     } catch (error) {
       console.error('Falha ao carregar estado:', error);
       return createDefaultState();
