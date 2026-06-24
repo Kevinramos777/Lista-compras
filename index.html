@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#4f46e5" />
+    <title>Minha Lista de Compras</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">🛒</div>
+          <div>
+            <p class="eyebrow">KcR List</p>
+            <h1>Minha Lista de Compras</h1>
+          </div>
+        </div>
+        <button id="themeToggle" class="icon-button" type="button" aria-label="Alternar tema">
+          <span id="themeIcon">🌙</span>
+        </button>
+      </header>
+
+      <main class="main-grid">
+        <section class="panel dashboard-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Visão geral</p>
+              <h2>Dashboard</h2>
+            </div>
+          </div>
+          <div class="stats-grid">
+            <article class="stat-card accent">
+              <span class="stat-label">Listas</span>
+              <strong id="totalLists">0</strong>
+            </article>
+            <article class="stat-card">
+              <span class="stat-label">Itens</span>
+              <strong id="totalItems">0</strong>
+            </article>
+            <article class="stat-card success">
+              <span class="stat-label">Comprados</span>
+              <strong id="purchasedItems">0</strong>
+            </article>
+            <article class="stat-card warning">
+              <span class="stat-label">Pendentes</span>
+              <strong id="pendingItems">0</strong>
+            </article>
+            <article class="stat-card highlight">
+              <span class="stat-label">Valor estimado</span>
+              <strong id="estimatedTotal">R$ 0,00</strong>
+            </article>
+          </div>
+        </section>
+
+        <section class="content-grid">
+          <aside class="panel lists-panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Organização</p>
+                <h3>Listas</h3>
+              </div>
+              <button id="newListButton" class="primary-button" type="button">+ Nova lista</button>
+            </div>
+
+            <label class="search-field" for="listSearch">
+              <span>🔎</span>
+              <input id="listSearch" type="search" placeholder="Pesquisar listas" />
+            </label>
+
+            <div id="listsContainer" class="lists-container"></div>
+          </aside>
+
+          <section class="panel details-panel">
+            <div id="listDetailHeader" class="detail-header"></div>
+
+            <div class="toolbar">
+              <div class="toolbar-group">
+                <label class="select-field" for="filterStatus">
+                  <span>Status</span>
+                  <select id="filterStatus">
+                    <option value="all">Todos</option>
+                    <option value="purchased">Comprados</option>
+                    <option value="pending">Pendentes</option>
+                  </select>
+                </label>
+
+                <label class="select-field" for="filterCategory">
+                  <span>Categoria</span>
+                  <select id="filterCategory">
+                    <option value="all">Todas</option>
+                  </select>
+                </label>
+
+                <label class="select-field" for="sortSelect">
+                  <span>Ordenar</span>
+                  <select id="sortSelect">
+                    <option value="name">Nome</option>
+                    <option value="price">Preço</option>
+                    <option value="category">Categoria</option>
+                  </select>
+                </label>
+              </div>
+
+              <button id="newItemButton" class="primary-button" type="button">+ Adicionar item</button>
+            </div>
+
+            <div id="itemsContainer" class="items-container"></div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <button id="fabAddItem" class="fab" type="button" aria-label="Adicionar item">+</button>
+
+    <div id="listModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="listModalTitle">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="listModalTitle">Criar lista</h3>
+          <button class="icon-button" data-close-modal="listModal" type="button">✕</button>
+        </div>
+        <form id="listForm" class="modal-form">
+          <input id="listId" type="hidden" />
+          <label class="field">
+            <span>Nome da lista</span>
+            <input id="listName" type="text" placeholder="Ex.: Mercado" required />
+          </label>
+          <div class="modal-actions">
+            <button class="ghost-button" data-close-modal="listModal" type="button">Cancelar</button>
+            <button class="primary-button" type="submit">Salvar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="itemModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="itemModalTitle">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="itemModalTitle">Adicionar item</h3>
+          <button class="icon-button" data-close-modal="itemModal" type="button">✕</button>
+        </div>
+        <form id="itemForm" class="modal-form">
+          <input id="itemId" type="hidden" />
+          <div class="form-grid">
+            <label class="field">
+              <span>Nome do produto</span>
+              <input id="itemName" type="text" placeholder="Ex.: Leite" required />
+            </label>
+            <label class="field">
+              <span>Quantidade</span>
+              <input id="itemQuantity" type="number" min="1" value="1" required />
+            </label>
+            <label class="field">
+              <span>Categoria</span>
+              <select id="itemCategory"></select>
+            </label>
+            <label class="field">
+              <span>Preço estimado</span>
+              <input id="itemPrice" type="number" min="0" step="0.01" value="0" required />
+            </label>
+          </div>
+          <label class="field">
+            <span>Observação</span>
+            <textarea id="itemNote" rows="3" placeholder="Opcional"></textarea>
+          </label>
+          <div class="modal-actions">
+            <button class="ghost-button" data-close-modal="itemModal" type="button">Cancelar</button>
+            <button class="primary-button" type="submit">Salvar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="confirmModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+      <div class="modal-card confirm-card">
+        <div class="modal-header">
+          <h3 id="confirmModalTitle">Confirmar ação</h3>
+          <button class="icon-button" data-close-modal="confirmModal" type="button">✕</button>
+        </div>
+        <p id="confirmMessage" class="confirm-message"></p>
+        <div class="modal-actions">
+          <button class="ghost-button" data-close-modal="confirmModal" type="button">Cancelar</button>
+          <button id="confirmAction" class="danger-button" type="button">Confirmar</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toasts" class="toasts" aria-live="polite"></div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
